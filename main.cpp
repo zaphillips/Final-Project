@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "Interface.h"
 
 using namespace std;
 
@@ -11,7 +12,6 @@ int main() {
     vector<string> pos_skills;
     string skill;
     string pref;
-    int skillCounter = 0;
     string userChoice;
     string jobFileName;
     ofstream jobFile;
@@ -20,18 +20,20 @@ int main() {
     int lineCounter = 0;
     string currentWord;
     int spaceCounter = 0;
+    vector<string> resumeFileNameVector;
+    fstream resumeFile;
 
-    cout << "Options:" << endl << "a. Make a Job File" << endl << "b. Choose a Job File" << endl;
+    cout << "Options:" << endl << "1. Make a Job File" << endl << "2. Choose a Job File" << endl;
     cout << "Choose an option:";
     getline(cin, userChoice);
 
-    while(toupper(userChoice[0]) != 'A' and toupper(userChoice[0]) != 'B'){
+    while(userChoice != "1" and userChoice != "2"){
         cout << "Choose a valid option: ";
         getline(cin, userChoice);
     }
 
-    switch(toupper(userChoice[0])) {
-        case 'A':
+    switch(userChoice[0]) {
+        case '1':
             cout << "Enter the name of the position: ";
             getline(cin, pos_name);
 
@@ -39,8 +41,6 @@ int main() {
             getline(cin, skill);
 
             do {
-
-                skillCounter++;
 
                 cout << "Enter the preference score for that skill (1-10): ";
                 getline(cin, pref);
@@ -71,7 +71,7 @@ int main() {
             jobFile.close();
             break;
 
-        case 'B':
+        case '2':
             cout << "Enter the name of the job file (Ex: job.txt): ";
             getline(cin, jobFileName);
             jobFileName = "jobs\\" + jobFileName;
@@ -126,20 +126,33 @@ int main() {
             break;
     }
 
-
-    cout << "Enter the file name of the resume (Ex: resume.txt):";
+    cout << "Enter the file name of a resume (Ex: resume.txt):";
     getline(cin, resumeFileName);
 
     resumeFileName = "resumes\\" + resumeFileName;
 
-    fstream resumeFile(resumeFileName);
+    do {
 
-    while(resumeFile.fail()){
-        cout << "Enter a valid file name (Ex: resume.txt):";
-        getline(cin, resumeFileName);
-        resumeFileName = "resumes\\" + resumeFileName;
         resumeFile.open(resumeFileName);
-    }
+
+        while (resumeFile.fail()) {
+            cout << "Enter a valid file name (Ex: resume.txt):";
+            getline(cin, resumeFileName);
+            resumeFileName = "resumes\\" + resumeFileName;
+            resumeFile.open(resumeFileName);
+        }
+
+        resumeFile.close();
+
+        resumeFileNameVector.push_back(resumeFileName);
+
+        cout << "Enter the file name of a resume (q to quit):";
+        getline(cin, resumeFileName);
+
+        resumeFileName = "resumes\\" + resumeFileName;
+
+
+    }while(resumeFileName != "resumes\\q" and resumeFileName != "resumes\\Q");
 
     return 0;
 }
