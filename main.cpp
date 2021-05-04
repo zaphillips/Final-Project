@@ -1,22 +1,47 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "Interface.h"
-
+#include "Job.h"
+#include "Resume.h"
+#include <dirent.h>
 using namespace std;
 
-void getJobInfo();
-void getResumeInfo();
+Job getJobInfo();
 
 int main() {
+    vector<string> resumeFileNames;
+    vector<Resume> resumes;
+    Resume myResume;
+    DIR *dr;
+    struct dirent *en;
+    dr = opendir("./resumes");
 
-    getJobInfo();
-    getResumeInfo();
+    if (dr){
+        while((en = readdir(dr)) != nullptr){
+            resumeFileNames.push_back(en->d_name);
+        }
+        closedir(dr);
+    }
+
+    for(auto f: resumeFileNames)
+        cout << f << endl;
+
+    Job job1 = getJobInfo();
+    job1.resumeFileNames = resumeFileNames;
+
+    for(int j = 0; j < resumeFileNames.size(); j++){
+        myResume.fileName = resumeFileNames[j];
+        resumes.push_back(myResume);
+        myResume = {};
+    }
+
+    cout << job1 << endl;
+    cout << resumeFileNames[0] << endl;
 
     return 0;
 }
 
-void getJobInfo(){
+Job getJobInfo(){
     string pos_name;
     vector<int> skill_pref;
     vector<string> pos_skills;
@@ -30,12 +55,12 @@ void getJobInfo(){
     string currentWord;
     int spaceCounter = 0;
 
-    cout << "Options:" << endl << "1. Make a Job File" << endl << "2. Choose a Job File" << endl;
-    cout << "Choose an option:";
-    getline(cin, userChoice);
+    cout << "Options:\n1. Create a Preference File\n2. Choose a Preference File";
+    cout << "\nChoose an option:";
+    getline(cin,userChoice);
 
     while(userChoice != "1" and userChoice != "2"){
-        cout << "Choose a valid option: ";
+        cout << "Choose a valid option:";
         getline(cin, userChoice);
     }
 
@@ -44,23 +69,22 @@ void getJobInfo(){
             cout << "Enter the name of the position: ";
             getline(cin, pos_name);
 
-            cout << "Enter a skill required for the position: ";
+            cout << "Enter a skill required for the position:";
             getline(cin, skill);
 
             do {
-
-                cout << "Enter the preference score for that skill (1-10): ";
+                cout << "Enter the preference score for that skill (1-10):";
                 getline(cin, pref);
 
                 while (stoi(pref) < 1 or stoi(pref) > 10) {
-                    cout << "Enter a valid preference score (1-10): ";
+                    cout << "Enter a valid preference score (1-10):";
                     getline(cin, pref);
                 }
 
                 pos_skills.push_back(skill);
                 skill_pref.push_back(stoi(pref));
 
-                cout << "Enter a skill required for the position (Enter 0 when you finish): ";
+                cout << "Enter a skill required for the position (Enter 0 when you finish):";
                 getline(cin, skill);
 
             } while (skill != "0");
@@ -79,14 +103,14 @@ void getJobInfo(){
             break;
 
         case '2':
-            cout << "Enter the name of the job file (Ex: job.txt): ";
+            cout << "Enter the name of the job file (Ex: job.txt):";
             getline(cin, jobFileName);
             jobFileName = "jobs\\" + jobFileName;
 
             fstream jobFileRead(jobFileName);
 
             while(jobFileRead.fail()){
-                cout << "Enter a valid file name (Ex: job.txt): ";
+                cout << "Enter a valid file name (Ex: job.txt):";
                 getline(cin, jobFileName);
                 jobFileName = "jobs\\" + jobFileName;
                 jobFileRead.open(jobFileName);
@@ -132,38 +156,6 @@ void getJobInfo(){
             }
             break;
     }
-}
-
-void getResumeInfo(){
-    string resumeFileName;
-    vector<string> resumeFileNameVector;
-    fstream resumeFile;
-
-    cout << "Enter the file name of a resume (Ex: resume.txt):";
-    getline(cin, resumeFileName);
-
-    resumeFileName = "resumes\\" + resumeFileName;
-
-    do {
-
-        resumeFile.open(resumeFileName);
-
-        while (resumeFile.fail()) {
-            cout << "Enter a valid file name (Ex: resume.txt):";
-            getline(cin, resumeFileName);
-            resumeFileName = "resumes\\" + resumeFileName;
-            resumeFile.open(resumeFileName);
-        }
-
-        resumeFile.close();
-
-        resumeFileNameVector.push_back(resumeFileName);
-
-        cout << "Enter the file name of a resume (q to quit):";
-        getline(cin, resumeFileName);
-
-        resumeFileName = "resumes\\" + resumeFileName;
-
-
-    }while(resumeFileName != "resumes\\q" and resumeFileName != "resumes\\Q");
+    Job job1(pos_name, pos_skills, skill_pref);
+    return job1;
 }

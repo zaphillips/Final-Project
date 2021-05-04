@@ -1,4 +1,0 @@
-#include "Interface.h"
-
-//public:
-
