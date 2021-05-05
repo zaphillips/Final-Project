@@ -1,4 +1,5 @@
 #include "Job.h"
+#include "Resume.h"
 
 //public:
 Job::Job(std::string pos_name, std::vector<std::string> pos_skills, std::vector<int> skill_prefs){

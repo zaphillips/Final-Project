@@ -16,6 +16,7 @@ int main() {
     struct dirent *en;
     dr = opendir("./resumes");
 
+    //gets file names in the "resumes" file
     if (dr){
         while((en = readdir(dr)) != nullptr){
             resumeFileNames.push_back(en->d_name);
@@ -23,20 +24,28 @@ int main() {
         closedir(dr);
     }
 
-    for(auto f: resumeFileNames)
-        cout << f << endl;
+    //erases invalid file names in resumeFileNames vector
+    for (int res = 0; res < resumeFileNames.size(); res++){
+        auto it = resumeFileNames.begin() + res;
+        auto found = resumeFileNames[res].find(".txt");
+        if(found == string::npos) {
+            resumeFileNames.erase(it);
+            res = -1;
+        }
+    }
 
-    Job job1 = getJobInfo();
-    job1.resumeFileNames = resumeFileNames;
+    //gets job position name/skills/preferences from user (either choosing a file or creating one)
+    Job myJob = getJobInfo();
 
+    //Creates Resume class object for each resume file in the "resumes" folder
     for(int j = 0; j < resumeFileNames.size(); j++){
         myResume.fileName = resumeFileNames[j];
         resumes.push_back(myResume);
         myResume = {};
     }
 
-    cout << job1 << endl;
-    cout << resumeFileNames[0] << endl;
+    //TODO: Implement name finder, implement Education/Job Name calculations, implement total match calculations, implement file appending, print out results (in order based on % match), make program bullet-proof.
+    //TODO (if time): Implement experience year scanner, implement job type variable (intern, full-time/part-time, etc.), implement name finder, adjust calculations.
 
     return 0;
 }

@@ -13,7 +13,6 @@ public:
     std::vector<std::string> pos_skills;
     std::vector<int> skill_prefs;
     friend std::ostream &operator<<(std::ostream &os, const Job &jobs);
-    std::vector<std::string> resumeFileNames;
 };
 
 
