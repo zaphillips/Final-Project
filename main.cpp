@@ -163,6 +163,7 @@ Job getJobInfo(){
             for(int k = 0; k < pos_skills.size(); k++){
                 cout << "Skill: " << pos_skills[k] << "\tPreference: " << skill_pref[k] << endl;
             }
+            jobFileRead.close();
             break;
     }
     Job job1(pos_name, pos_skills, skill_pref);

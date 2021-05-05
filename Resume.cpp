@@ -9,15 +9,15 @@
 Resume::Resume()= default;
 
 void Resume::calcSkillPercents(Job myJob) {
+    fileName = "resumes\\" + fileName;
+    std::fstream resumeFile;
+    std::string line;
+    resumeFile.open(fileName);
     for(int k = 0; k < myJob.pos_skills.size(); k++) {
         double skillPoint = 0;
-        fileName = "resumes\\" + fileName;
-        std::fstream resumeFile;
-        std::string line;
+
         std::string SKILL = myJob.pos_skills[k];
         std::transform(SKILL.begin(), SKILL.end(), SKILL.begin(), toupper);
-
-        resumeFile.open(fileName);
 
         while (getline(resumeFile, line)) {
             std::transform(line.begin(), line.end(), line.begin(), toupper);
@@ -31,8 +31,11 @@ void Resume::calcSkillPercents(Job myJob) {
             skillMatchPercents.push_back(100);
         else
             skillMatchPercents.push_back((skillPoint/myJob.skill_prefs[k]) * 100);
-    }
 
+        resumeFile.clear();
+        resumeFile.seekg(0, std::ios::beg);
+    }
+    resumeFile.close();
 }
 
 void Resume::calcSoftSkillScore(){
@@ -50,4 +53,5 @@ void Resume::calcSoftSkillScore(){
                 softSkillScore += 0.1;
         }
     }
+    resumeFile.close();
 }
