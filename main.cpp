@@ -7,6 +7,7 @@
 using namespace std;
 
 Job getJobInfo();
+void getResults(Job, vector <Resume>);
 
 int main() {
     vector<string> resumeFileNames;
@@ -16,7 +17,7 @@ int main() {
     struct dirent *en;
     dr = opendir("./resumes");
 
-    //gets file names in the "resumes" file
+    //gets file names in the "resumes" folder
     if (dr){
         while((en = readdir(dr)) != nullptr){
             resumeFileNames.push_back(en->d_name);
@@ -44,8 +45,52 @@ int main() {
         myResume = {};
     }
 
-    //TODO: Implement name finder, implement Education/Job Name calculations, implement total match calculations, implement file appending, print out results (in order based on % match), make program bullet-proof.
-    //TODO (if time): Implement experience year scanner, implement job type variable (intern, full-time/part-time, etc.), implement name finder, adjust calculations.
+    //Calculates stats for each resume object
+    for(auto &resume : resumes){
+        resume.getCandidateName();
+        resume.scanForJob(myJob);
+        resume.calcSoftSkillScore();
+        resume.calcSkillPercents(myJob);
+        resume.calcTotalMatch();
+    }
+
+    //Creates necessary variables to append resume class data to file.
+    string resultsjobFileName;
+    ofstream resultsjobFile;
+    string resultsline;
+    string resultscandidateName;
+    vector<string> resultsskillList = myJob.pos_skills;
+    vector<double> resultsskillMatchPercents;
+    double resultstotalPercentMatch;
+    string resultspos_name = myJob.pos_name;
+
+    //Prints out data to the console and appends data to each resume file.
+    cout <<endl << "Candidates and Total Match Scores:" << endl;
+
+    for(int i = 0; i < resumes.size(); i++) {
+        resultsjobFileName = "resumes\\" + resumes[i].fileName;
+        resultscandidateName = resumes[i].candidateName;
+        resultsskillMatchPercents = resumes[i].skillMatchPercents;
+        resultstotalPercentMatch = resumes[i].totalPercentMatch;
+
+        resultsjobFile.open(resultsjobFileName, std::ios_base::app);
+
+        resultsjobFile << "\n\nPosition: " << resultspos_name << endl;
+
+        for (int j = 0; j < resultsskillList.size(); j++) {
+            resultsjobFile << "Skill: " << resultsskillList[j] << "\tPercent Match: " << resultsskillMatchPercents[j]
+                           << "%" << endl;
+        }
+
+        resultsjobFile << "Total Percent Match: " << resultstotalPercentMatch << "%" << endl;
+
+        resultsjobFile.close();
+
+        cout.precision(2);
+        cout << fixed;
+        cout << "Name: " << resultscandidateName << "\tPercent Match: " << resultstotalPercentMatch << "%" << endl;
+
+    }
 
     return 0;
 }
@@ -169,3 +214,6 @@ Job getJobInfo(){
     Job job1(pos_name, pos_skills, skill_pref);
     return job1;
 }
+
+//TODO (if time): Implement Education, implement total match calculations, implement file appending, print out results (in order based on % match), make program bullet-proof.
+//TODO (if time): Implement experience year scanner, implement job type variable (intern, full-time/part-time, etc.), implement name finder, adjust calculations.
