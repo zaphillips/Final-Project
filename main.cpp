@@ -1,5 +1,15 @@
+/******************************************
+ Filename: main.cpp
+ Author: Zachary Phillips on 5/8/21
+ Description: Resume Match Analyzer.
+
+ I have included a pre-made job preference
+ file. You can also create one yourself
+ by choosing the "Create Preference File"
+ option.
+
+******************************************/
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include "Job.h"
 #include "Resume.h"
@@ -175,7 +185,7 @@ Job getJobInfo(){
                 currentWord = {};
                 if(lineCounter == 1){
                     for(char chr: line){
-                        if(spaceCounter == 2){
+                        if(spaceCounter >= 2){
                             currentWord += chr;
                         }
                         if(chr == ' '){
@@ -214,6 +224,3 @@ Job getJobInfo(){
     Job job1(pos_name, pos_skills, skill_pref);
     return job1;
 }
-
-//TODO (if time): Implement Education, implement total match calculations, implement file appending, print out results (in order based on % match), make program bullet-proof.
-//TODO (if time): Implement experience year scanner, implement job type variable (intern, full-time/part-time, etc.), implement name finder, adjust calculations.
